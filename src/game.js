@@ -289,29 +289,107 @@ function tick(now = performance.now()) {
 }
 
 function drawPlayer() {
+  // Anime-ish chibi runner (still a simple shape, but with face + hair + outfit).
   const x = player.x;
   const y = player.y;
-  // cute yellow body
+  const w = player.w;
+  const h = player.h;
+
+  // Small run bob
+  const bob = S.running && !S.paused && S.countdown === 0 ? Math.sin(S.t * 10) * 1.6 : 0;
+  const px = x;
+  const py = y + bob;
+
+  const head = {
+    x: px + w * 0.12,
+    y: py + h * 0.02,
+    w: w * 0.76,
+    h: h * 0.56,
+  };
+  const body = {
+    x: px + w * 0.18,
+    y: py + h * 0.46,
+    w: w * 0.64,
+    h: h * 0.52,
+  };
+
+  // Shadow
+  ctx.fillStyle = 'rgba(0,0,0,0.25)';
+  ctx.beginPath();
+  ctx.ellipse(px + w * 0.5, py + h + 8, w * 0.42, 6, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Hair (dark blue)
+  ctx.fillStyle = 'rgba(70, 95, 185, 0.95)';
+  roundRect(head.x, head.y - 2, head.w, head.h * 0.72, 14);
+  ctx.fill();
+  // Bangs
+  ctx.beginPath();
+  ctx.moveTo(head.x + head.w * 0.12, head.y + head.h * 0.22);
+  ctx.quadraticCurveTo(head.x + head.w * 0.45, head.y + head.h * 0.58, head.x + head.w * 0.58, head.y + head.h * 0.18);
+  ctx.quadraticCurveTo(head.x + head.w * 0.68, head.y + head.h * 0.50, head.x + head.w * 0.88, head.y + head.h * 0.20);
+  ctx.lineTo(head.x + head.w * 0.88, head.y + head.h * 0.05);
+  ctx.lineTo(head.x + head.w * 0.12, head.y + head.h * 0.05);
+  ctx.closePath();
+  ctx.fill();
+
+  // Face
+  ctx.fillStyle = 'rgba(255, 226, 200, 0.98)';
+  roundRect(head.x + 2, head.y + head.h * 0.18, head.w - 4, head.h * 0.82, 16);
+  ctx.fill();
+
+  // Eyes (big + shiny)
+  const eyeY = head.y + head.h * 0.55;
+  const eyeLX = head.x + head.w * 0.32;
+  const eyeRX = head.x + head.w * 0.68;
+  ctx.fillStyle = 'rgba(20, 30, 60, 0.95)';
+  ctx.beginPath();
+  ctx.ellipse(eyeLX, eyeY, 4.3, 5.4, 0, 0, Math.PI * 2);
+  ctx.ellipse(eyeRX, eyeY, 4.3, 5.4, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(120, 200, 255, 0.9)';
+  ctx.beginPath();
+  ctx.ellipse(eyeLX, eyeY + 1.2, 2.2, 2.2, 0, 0, Math.PI * 2);
+  ctx.ellipse(eyeRX, eyeY + 1.2, 2.2, 2.2, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  ctx.beginPath();
+  ctx.arc(eyeLX + 1.2, eyeY - 2.0, 1.4, 0, Math.PI * 2);
+  ctx.arc(eyeRX + 1.2, eyeY - 2.0, 1.4, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Cheeks
+  ctx.fillStyle = 'rgba(255, 120, 170, 0.22)';
+  ctx.beginPath();
+  ctx.arc(head.x + head.w * 0.22, head.y + head.h * 0.74, 6.6, 0, Math.PI * 2);
+  ctx.arc(head.x + head.w * 0.78, head.y + head.h * 0.74, 6.6, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Mouth
+  ctx.strokeStyle = 'rgba(120, 60, 60, 0.65)';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(head.x + head.w * 0.5, head.y + head.h * 0.78, 4, 0.05 * Math.PI, 0.95 * Math.PI);
+  ctx.stroke();
+
+  // Outfit (hoodie-ish)
   ctx.fillStyle = 'rgba(255, 214, 74, 0.96)';
-  roundRect(x, y, player.w, player.h, 12);
+  roundRect(body.x, body.y, body.w, body.h, 14);
+  ctx.fill();
+  // Hoodie pocket
+  ctx.fillStyle = 'rgba(0,0,0,0.10)';
+  roundRect(body.x + body.w * 0.18, body.y + body.h * 0.46, body.w * 0.64, body.h * 0.34, 10);
+  ctx.fill();
+  // Collar highlight
+  ctx.fillStyle = 'rgba(255,255,255,0.18)';
+  roundRect(body.x + body.w * 0.28, body.y + body.h * 0.06, body.w * 0.44, body.h * 0.18, 10);
   ctx.fill();
 
-  // tiny cheek blush
-  ctx.fillStyle = 'rgba(255, 120, 170, 0.28)';
-  ctx.beginPath();
-  ctx.arc(x + player.w * 0.28, y + player.h * 0.50, 8, 0, Math.PI * 2);
-  ctx.fill();
-
-  // eye
-  ctx.fillStyle = 'rgba(0,0,0,0.55)';
-  ctx.beginPath();
-  ctx.arc(x + player.w * 0.68, y + player.h * 0.32, 4, 0, Math.PI * 2);
-  ctx.fill();
-
-  // shine
-  ctx.fillStyle = 'rgba(255,255,255,0.55)';
-  ctx.beginPath();
-  ctx.arc(x + player.w * 0.73, y + player.h * 0.27, 1.4, 0, Math.PI * 2);
+  // Feet (little shoes)
+  const footY = py + h * 0.98;
+  ctx.fillStyle = 'rgba(30, 35, 60, 0.9)';
+  roundRect(px + w * 0.22, footY, w * 0.22, 8, 6);
+  roundRect(px + w * 0.56, footY, w * 0.22, 8, 6);
   ctx.fill();
 }
 
