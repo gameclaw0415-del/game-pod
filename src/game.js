@@ -17,6 +17,9 @@ const S = {
   best: Number(localStorage.getItem('tinyRunnerBest') || 0),
   shake: 0,
   countdown: 0, // seconds before motion starts
+  coyote: 0,    // seconds of grace after leaving ground
+  jumpBuf: 0,   // buffered jump input (seconds)
+  jumpHeld: false,
 };
 
 bestEl.textContent = String(S.best);
@@ -48,6 +51,9 @@ function reset() {
   S.score = 0;
   S.shake = 0;
   S.countdown = 1.2;
+  S.coyote = 0;
+  S.jumpBuf = 0;
+  S.jumpHeld = false;
   player.y = world.floorY;
   player.vy = 0;
   player.onGround = true;
@@ -65,14 +71,26 @@ function spawnObstacle(first = false) {
   obstacles.push({ x, y, w, h, passed: false });
 }
 
-function jump() {
+function tryJump() {
   if (!S.running) return;
   if (S.paused) return;
-  if (player.onGround) {
+  if (S.countdown > 0) return;
+
+  const canJump = player.onGround || S.coyote > 0;
+  if (canJump) {
     player.vy = player.jumpV;
     player.onGround = false;
+    S.coyote = 0;
+    S.jumpBuf = 0;
     blip(420, 0.06);
   }
+}
+
+function queueJump() {
+  // Jump buffering makes the game feel much less "unfair".
+  S.jumpBuf = 0.12;
+  S.jumpHeld = true;
+  tryJump();
 }
 
 function togglePause() {
@@ -107,18 +125,33 @@ function update(dt) {
     return;
   }
 
+  // Jump timing helpers
+  S.jumpBuf = Math.max(0, S.jumpBuf - dt);
+  S.coyote = Math.max(0, S.coyote - dt);
+
   // Speed ramps over time
   const k = clamp(S.t / 50, 0, 1);
   const speed = lerp(world.speed, world.speedMax, k);
 
   // Player physics
   player.vy += world.g * dt;
+
+  // Variable jump height: if you release early, you don't go as high.
+  if (!S.jumpHeld && player.vy < 0) player.vy *= 0.86;
+
   player.y += player.vy * dt;
   if (player.y >= world.floorY) {
     player.y = world.floorY;
     player.vy = 0;
     player.onGround = true;
+  } else {
+    // give a tiny grace period after stepping off / leaving ground
+    if (player.onGround) S.coyote = 0.09;
+    player.onGround = false;
   }
+
+  // buffered jump triggers as soon as it's valid
+  if (S.jumpBuf > 0) tryJump();
 
   // Obstacles
   for (const o of obstacles) {
@@ -316,11 +349,19 @@ function roundRect(x, y, w, h, r) {
 // --- Events ---
 startBtn.addEventListener('click', () => reset());
 window.addEventListener('keydown', (e) => {
-  if (e.code === 'Space') { e.preventDefault(); if (!S.running) reset(); else jump(); }
+  if (e.code === 'Space') {
+    e.preventDefault();
+    if (!S.running) reset();
+    else queueJump();
+  }
   if (e.key.toLowerCase() === 'p') togglePause();
   if (e.key.toLowerCase() === 'm') { S.muted = !S.muted; }
 });
-canvas.addEventListener('pointerdown', () => { if (!S.running) reset(); else jump(); });
+window.addEventListener('keyup', (e) => {
+  if (e.code === 'Space') S.jumpHeld = false;
+});
+canvas.addEventListener('pointerdown', () => { if (!S.running) reset(); else { S.jumpHeld = true; queueJump(); } });
+canvas.addEventListener('pointerup', () => { S.jumpHeld = false; });
 
 // start in attract mode
 render(true);
