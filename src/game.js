@@ -16,6 +16,7 @@ const S = {
   score: 0,
   best: Number(localStorage.getItem('tinyRunnerBest') || 0),
   shake: 0,
+  countdown: 0, // seconds before motion starts
 };
 
 bestEl.textContent = String(S.best);
@@ -46,6 +47,7 @@ function reset() {
   S.paused = false;
   S.score = 0;
   S.shake = 0;
+  S.countdown = 1.2;
   player.y = world.floorY;
   player.vy = 0;
   player.onGround = true;
@@ -98,6 +100,12 @@ function gameOver() {
 
 function update(dt) {
   S.t += dt;
+
+  // Countdown: let the player get ready.
+  if (S.countdown > 0) {
+    S.countdown = Math.max(0, S.countdown - dt);
+    return;
+  }
 
   // Speed ramps over time
   const k = clamp(S.t / 50, 0, 1);
@@ -169,6 +177,18 @@ function render(over = false) {
   // Player
   drawPlayer();
 
+  // Countdown overlay
+  if (S.countdown > 0 && S.running) {
+    const n = Math.ceil(S.countdown / 0.4);
+    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'rgba(255,255,255,0.95)';
+    ctx.font = '900 64px system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
+    ctx.fillText(String(n), canvas.width / 2 - 18, canvas.height / 2);
+    ctx.font = '600 18px system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
+    ctx.fillText('Get ready…', canvas.width / 2 - 55, canvas.height / 2 + 34);
+  }
+
   // Obstacles
   for (const o of obstacles) {
     ctx.fillStyle = 'rgba(255, 120, 120, 0.9)';
@@ -219,14 +239,27 @@ function tick(now = performance.now()) {
 function drawPlayer() {
   const x = player.x;
   const y = player.y;
-  ctx.fillStyle = 'rgba(120, 200, 255, 0.95)';
+  // cute yellow body
+  ctx.fillStyle = 'rgba(255, 214, 74, 0.96)';
   roundRect(x, y, player.w, player.h, 12);
+  ctx.fill();
+
+  // tiny cheek blush
+  ctx.fillStyle = 'rgba(255, 120, 170, 0.28)';
+  ctx.beginPath();
+  ctx.arc(x + player.w * 0.28, y + player.h * 0.50, 8, 0, Math.PI * 2);
   ctx.fill();
 
   // eye
   ctx.fillStyle = 'rgba(0,0,0,0.55)';
   ctx.beginPath();
   ctx.arc(x + player.w * 0.68, y + player.h * 0.32, 4, 0, Math.PI * 2);
+  ctx.fill();
+
+  // shine
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.beginPath();
+  ctx.arc(x + player.w * 0.73, y + player.h * 0.27, 1.4, 0, Math.PI * 2);
   ctx.fill();
 }
 
