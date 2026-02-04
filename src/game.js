@@ -231,7 +231,7 @@ function render(over = false) {
     ctx.font = '900 64px system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
     ctx.fillText(String(n), canvas.width / 2 - 18, canvas.height / 2);
     ctx.font = '600 18px system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
-    ctx.fillText('Get ready…', canvas.width / 2 - 55, canvas.height / 2 + 34);
+    ctx.fillText('准备…', canvas.width / 2 - 30, canvas.height / 2 + 34);
   }
 
   // Obstacles
@@ -251,7 +251,7 @@ function render(over = false) {
   // HUD text
   ctx.fillStyle = 'rgba(255,255,255,0.9)';
   ctx.font = '600 18px system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
-  ctx.fillText('Tiny Runner', 16, 28);
+  ctx.fillText('小小跑酷', 16, 28);
 
   if (!S.running) {
     ctx.fillStyle = 'rgba(0,0,0,0.55)';
@@ -259,10 +259,10 @@ function render(over = false) {
 
     ctx.fillStyle = 'white';
     ctx.font = '800 40px system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
-    ctx.fillText('Game Over', 360, 230);
+    ctx.fillText('游戏结束', 380, 230);
 
     ctx.font = '600 18px system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
-    ctx.fillText('Click Start / Restart (or press Space) to try again.', 292, 270);
+    ctx.fillText('点击「开始 / 重新开始」（或按空格）再试一次。', 280, 270);
   }
 
   if (S.paused && S.running) {
@@ -270,7 +270,7 @@ function render(over = false) {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = 'white';
     ctx.font = '800 40px system-ui, -apple-system, Segoe UI, Roboto, sans-serif';
-    ctx.fillText('Paused', 410, 260);
+    ctx.fillText('已暂停', 420, 260);
   }
 
   ctx.restore();
