@@ -3,45 +3,50 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Ev 的小小跑酷</title>
+    <title>GamePod · 游戏目录</title>
     <style>
       :root { color-scheme: dark; }
       body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: #0b1020; color: #e6e6e6; }
       header { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); display:flex; gap:12px; align-items:center; justify-content:space-between; }
       header a { color: #a8c7ff; text-decoration: none; }
-      .wrap { max-width: 980px; margin: 0 auto; padding: 16px; }
-      .card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; overflow: hidden; }
-      canvas { width: 100%; height: auto; display: block; background: radial-gradient(1200px 600px at 30% 30%, #19244b, #070a14); }
-      .bar { display:flex; gap:12px; align-items:center; padding: 12px 14px; border-top: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap; }
-      button { background: #2a3f8f; color: white; border: 0; padding: 10px 12px; border-radius: 10px; cursor: pointer; }
-      button:active { transform: translateY(1px); }
-      kbd { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); padding: 2px 6px; border-radius: 6px; }
+      .wrap { max-width: 980px; margin: 0 auto; padding: 18px 16px; }
+      .grid { display:grid; gap:14px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+      .card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 14px; }
+      .card h2 { margin: 0 0 8px; font-size: 16px; }
+      .card p { margin: 0 0 12px; opacity: 0.85; }
+      .btn { display:inline-block; background: #2a3f8f; color: white; padding: 10px 12px; border-radius: 10px; text-decoration:none; }
+      code { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); padding: 2px 6px; border-radius: 6px; }
       .muted { opacity: 0.8; }
     </style>
   </head>
   <body>
     <header>
-      <div><strong>Ev 的小小跑酷</strong> <span class="muted">（静态 HTML5）</span></div>
-      <div><a href="https://github.com/" target="_blank" rel="noreferrer">GitHub</a></div>
+      <div><strong>GamePod</strong> <span class="muted">· 游戏目录</span></div>
+      <div class="muted">路径：<code>/projects/gamepod/</code></div>
     </header>
 
     <div class="wrap">
-      <div class="card">
-        <canvas id="c" width="960" height="540" aria-label="游戏画布"></canvas>
-        <div class="bar">
-          <button id="start">开始 / 重新开始</button>
-          <div class="muted">
-            跳跃：<kbd>空格</kbd> 或 点击/轻触 · 暂停：<kbd>P</kbd> · 静音：<kbd>M</kbd>
-          </div>
-          <div style="margin-left:auto" class="muted">得分：<span id="score">0</span> · 最高：<span id="best">0</span></div>
+      <p class="muted">选择一个小游戏开始吧：</p>
+
+      <div class="grid">
+        <div class="card">
+          <h2>小小跑酷（Tiny Runner）</h2>
+          <p>空格/点击跳跃，躲避障碍，看看你能跑多远。</p>
+          <a class="btn" href="./projects/gamepod/tiny-runner/">开始游戏</a>
+        </div>
+
+        <div class="card">
+          <h2>2048（敬请期待）</h2>
+          <p class="muted">即将加入。</p>
+          <span class="btn" style="opacity:0.5; pointer-events:none;">Soon</span>
+        </div>
+
+        <div class="card">
+          <h2>更多小游戏</h2>
+          <p class="muted">后续会继续添加到 <code>/projects/gamepod/</code> 下。</p>
+          <span class="btn" style="opacity:0.5; pointer-events:none;">Soon</span>
         </div>
       </div>
-
-      <p class="muted" style="margin-top:14px">
-        部署建议：<strong>GitHub Pages + GitHub Actions</strong>（不需要 PAT）。
-      </p>
     </div>
-
-    <script src="./src/game.js" type="module"></script>
   </body>
 </html>

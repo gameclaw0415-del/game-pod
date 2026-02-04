@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ev 的小小跑酷</title>
+    <style>
+      :root { color-scheme: dark; }
+      body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: #0b1020; color: #e6e6e6; }
+      header { padding: 14px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); display:flex; gap:12px; align-items:center; justify-content:space-between; }
+      header a { color: #a8c7ff; text-decoration: none; }
+      .wrap { max-width: 980px; margin: 0 auto; padding: 16px; }
+      .card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; overflow: hidden; }
+      canvas { width: 100%; height: auto; display: block; background: radial-gradient(1200px 600px at 30% 30%, #19244b, #070a14); }
+      .bar { display:flex; gap:12px; align-items:center; padding: 12px 14px; border-top: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap; }
+      button { background: #2a3f8f; color: white; border: 0; padding: 10px 12px; border-radius: 10px; cursor: pointer; }
+      button:active { transform: translateY(1px); }
+      kbd { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); padding: 2px 6px; border-radius: 6px; }
+      .muted { opacity: 0.8; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div><strong>Ev 的小小跑酷</strong> <span class="muted">（静态 HTML5）</span></div>
+      <div><a href="https://github.com/" target="_blank" rel="noreferrer">GitHub</a></div>
+    </header>
+
+    <div class="wrap">
+      <div class="card">
+        <canvas id="c" width="960" height="540" aria-label="游戏画布"></canvas>
+        <div class="bar">
+          <button id="start">开始 / 重新开始</button>
+          <div class="muted">
+            跳跃：<kbd>空格</kbd> 或 点击/轻触 · 暂停：<kbd>P</kbd> · 静音：<kbd>M</kbd>
+          </div>
+          <div style="margin-left:auto" class="muted">得分：<span id="score">0</span> · 最高：<span id="best">0</span></div>
+        </div>
+      </div>
+
+      <p class="muted" style="margin-top:14px">
+        部署建议：<strong>GitHub Pages + GitHub Actions</strong>（不需要 PAT）。
+      </p>
+    </div>
+
+    <script src="./src/game.js" type="module"></script>
+  </body>
+</html>
