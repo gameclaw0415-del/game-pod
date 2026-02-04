@@ -63,12 +63,24 @@ function reset() {
 }
 
 function spawnObstacle(first = false) {
-  const gap = first ? 520 : rand(380, 720);
-  const h = rand(38, 84);
-  const w = rand(22, 44);
-  const y = world.floorY + player.h - h;
+  const gap = first ? 520 : rand(360, 700);
+
+  // Variety: mostly ground blocks, sometimes a flying block.
+  const flying = !first && Math.random() < 0.28;
+
+  let h, w, y;
+  if (flying) {
+    h = rand(26, 44);
+    w = rand(26, 54);
+    y = world.floorY - rand(92, 160);
+  } else {
+    h = rand(38, 92);
+    w = rand(22, 46);
+    y = world.floorY + player.h - h;
+  }
+
   const x = canvas.width + gap;
-  obstacles.push({ x, y, w, h, passed: false });
+  obstacles.push({ x, y, w, h, passed: false, flying });
 }
 
 function tryJump() {
@@ -224,9 +236,16 @@ function render(over = false) {
 
   // Obstacles
   for (const o of obstacles) {
-    ctx.fillStyle = 'rgba(255, 120, 120, 0.9)';
+    ctx.fillStyle = o.flying ? 'rgba(180, 140, 255, 0.9)' : 'rgba(255, 120, 120, 0.9)';
     roundRect(o.x, o.y, o.w, o.h, 8);
     ctx.fill();
+
+    // tiny "wing" shine for flying ones
+    if (o.flying) {
+      ctx.fillStyle = 'rgba(255,255,255,0.35)';
+      roundRect(o.x + 6, o.y + 6, Math.max(8, o.w * 0.35), 6, 4);
+      ctx.fill();
+    }
   }
 
   // HUD text
